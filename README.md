@@ -56,3 +56,16 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Comptes de démonstration
+
+Quatre comptes sont créés automatiquement par le seeder :
+
+| Nom | Email | Mot de passe | Rôle | Promotion |
+|-----|-------|--------------|------|-----------|
+| Awa Diop | awa@cohorte.test | password | Apprenant | Groupe A |
+| Moussa Ba | moussa@cohorte.test | password | Délégué | Groupe A |
+| Fatou Sow | fatou@cohorte.test | password | Apprenant | Groupe B |
+| Formateur | formateur@cohorte.test | password | Enseignant | Aucune |
+
+**Important :** Ces comptes sont obligatoires pour la soutenance. Le correcteur testera le cloisonnement en se connectant avec Awa puis en essayant d'accéder à une publication de Fatou.
