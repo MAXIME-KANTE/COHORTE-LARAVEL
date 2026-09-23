@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Entraide\DetectionDoublonController;
 use App\Http\Controllers\Entraide\QuestionController;
 use App\Http\Controllers\Entraide\ReponseController;
 use App\Http\Controllers\Entraide\ReponseRetenueController;
@@ -39,6 +40,12 @@ Route::middleware(['auth', 'promotion'])->group(function () {
     // L'entraide : questions, réponses et réponse retenue
     Route::resource('questions', QuestionController::class)
         ->only(['index', 'create', 'store', 'show']);
+
+    // Vérification de doublon avant publication : la seule route
+    // à qui le quota d'IA peut être refusé (assistance facultative)
+    Route::post('questions/verifier-doublon', [DetectionDoublonController::class, 'store'])
+        ->middleware('quota.ia')
+        ->name('questions.doublon');
 
     Route::post('questions/{question}/reponses', [ReponseController::class, 'store'])
         ->name('reponses.store');

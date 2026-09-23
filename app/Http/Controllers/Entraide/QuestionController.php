@@ -40,12 +40,27 @@ class QuestionController extends Controller
         return view('entraide.create');
     }
 
-    public function store(StoreQuestionRequest $request, ServiceModeration $moderation): RedirectResponse
+    public function store(StoreQuestionRequest $request, ServiceModeration $moderation, \App\Services\ServiceDetectionDoublon $detection): RedirectResponse
     {
-        $verdict = $moderation->evaluer($request->validated()['contenu'], $request->user());
+        $donnees = $request->validated();
+
+        // Première soumission : si le quota le permet, on vérifie les doublons
+        // avant d'enregistrer. La seconde soumission porte doublon_verifie=1.
+        if (! $request->boolean('doublon_verifie') && $request->user()->peutAppelerIa()) {
+            $similaires = $detection->chercherSimilaires($donnees['titre'], $request->user());
+
+            if ($similaires !== []) {
+                return redirect()
+                    ->route('questions.create')
+                    ->withInput()
+                    ->with('similaires', $similaires);
+            }
+        }
+
+        $verdict = $moderation->evaluer($donnees['contenu'], $request->user());
 
         $question = Publication::create([
-            ...$request->validated(),
+            ...$donnees,
             'type' => 'question',
             'user_id' => $request->user()->id,
             'promotion_id' => $request->user()->promotion_id,
