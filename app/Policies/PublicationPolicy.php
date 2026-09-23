@@ -42,4 +42,9 @@ class PublicationPolicy
         return $user->promotion_id === $publication->promotion_id
             && $user->id !== $publication->user_id;
     }
+
+    public function designerReponse(User $user, Publication $publication): bool
+    {
+        return $user->id === $publication->user_id && $publication->type === 'question';
+    }
 }
