@@ -69,3 +69,20 @@ Deux problèmes : `fortify:install` active par défaut la 2FA et les passkeys, e
 
 ### Comment je l'ai résolue
 J'ai retiré les fonctionnalités 2FA/passkeys de la config, supprimé leurs migrations avant tout commit, et complété les cinq migrations vides dans un commit `fix(bdd)` à part, validé par `migrate:fresh --seed` et des tests d'inscription (code valide, code inconnu, promotion fermée).
+
+## Phase 4 — Rejoindre une promotion et le profil
+
+**Branche :** feat/04-adhesion-promotion
+**Date :** 23 septembre 2026
+
+### Ce que j'ai fait
+J'ai créé le middleware ExigePromotion (alias `promotion`) qui garantit qu'aucun membre sans promotion n'entre dans les pages métier, le module d'adhésion par code d'invitation (AdhesionController), le tableau de bord enseignant qui liste toutes les promotions avec leurs compteurs et lit leur fil, ainsi que la page de profil branchée sur les formulaires de mise à jour Fortify.
+
+### Pourquoi je l'ai fait ainsi
+C'est une invariante : le middleware vérifie une fois, en amont, que promotion_id existe, et tout le code en aval (scopes deLaPromotion, etc.) peut le tenir pour acquis. L'enseignant est redirigé vers son propre module car il n'a jamais de promotion_id.
+
+### La difficulté rencontrée
+La route `publications.index` n'existe qu'à partir de la phase 5, alors que l'adhésion et Fortify redirigent déjà vers elle ; et l'enseignant qui posterait un code sur /rejoindre serait rattaché à une promotion, ce qui n'a pas de sens.
+
+### Comment je l'ai résolue
+J'ai posé une route `/publications` temporaire (remplacée par le resource controller en phase 5) pour que les redirections restent valides à chaque merge, et un `abort_if(enseignant, 403)` défensif dans AdhesionController@store.

@@ -11,9 +11,14 @@
         <a href="/" class="logo">Cohorte</a>
         @auth
             <nav>
+                @if (auth()->user()->estEnseignant())
+                    <a href="{{ route('enseignant.promotions.index') }}">Promotions</a>
+                @else
+                    <a href="{{ route('profil.show') }}">{{ auth()->user()->name }}</a>
+                @endif
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit">Déconnexion ({{ auth()->user()->name }})</button>
+                    <button type="submit">Déconnexion</button>
                 </form>
             </nav>
         @endauth
