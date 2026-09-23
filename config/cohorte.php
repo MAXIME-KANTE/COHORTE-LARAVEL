@@ -10,6 +10,7 @@ return [
     // Score de réputation ouvrant le droit d'épingler
     'seuil_epinglage' => (int) env('COHORTE_SEUIL_EPINGLAGE', 50),
 
-    // Que faire si OpenRouter ne répond pas
+    // Que faire si OpenRouter ne répond pas: publier quand même (true)
+    // ou envoyer en file de modération (false)? Décision à justifier.
     'moderation_fail_open' => (bool) env('COHORTE_MODERATION_FAIL_OPEN', false),
 ];

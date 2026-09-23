@@ -35,3 +35,37 @@ L'ordre des migrations était crucial : promotions doit exister avant users, et 
 ### Comment je l'ai résolue
 
 J'ai vérifié l'ordre avec `Get-ChildItem database/migrations/` et utilisé Rename-Item pour ajuster les timestamps. J'ai testé avec `php artisan migrate:fresh` pour valider que tout fonctionne.
+
+## Phase 2 — Seeders et factories
+
+**Branche :** feat/02-seeders
+**Date :** 3 septembre 2026 (entrée consignée au journal lors de la phase 3)
+
+### Ce que j'ai fait
+J'ai créé les factories Promotion, Publication et Reponse (avec les états `question()` et `enModeration()`) puis le DatabaseSeeder qui initialise deux promotions (GRPA26, GRPB26) et quatre comptes de démonstration documentés dans le README.
+
+### Pourquoi je l'ai fait ainsi
+Les comptes de démonstration permettent au correcteur de tester le cloisonnement entre promotions sans créer de données à la main, et les états de factory rendent les tests lisibles.
+
+### La difficulté rencontrée
+La répartition des rôles (apprenant, délégué, enseignant) devait être réaliste : un enseignant sans promotion, un délégué dans la promotion A.
+
+### Comment je l'ai résolue
+J'ai fixé la liste des comptes avant d'écrire le seeder et je les ai documentés dans le README pour ne jamais m'en écarter.
+
+## Phase 3 — Authentification Fortify avec code d'invitation
+
+**Branche :** feat/03-authentification-fortify
+**Date :** 23 septembre 2026
+
+### Ce que j'ai fait
+J'ai installé Laravel Fortify et restreint son périmètre aux fonctionnalités du sujet : inscription, connexion, réinitialisation de mot de passe, mise à jour du profil et du mot de passe. L'inscription exige un code d'invitation valide et rattache l'utilisateur à sa promotion avec le rôle apprenant. J'ai aussi complété le schéma des tables métier (publications, reponses, signalements, appels_ia) livré vide à la phase 1, ajouté la page d'accueil publique et un limiteur de tentatives de connexion (5 par minute et par e-mail/IP).
+
+### Pourquoi je l'ai fait ainsi
+Fortify gère les routes d'authentification sans controller boilerplate, et le guide §7.3 liste exactement les fonctionnalités attendues : tout le reste est hors périmètre. La validation du code d'invitation dans CreateNewUser avec des messages explicites (code inconnu, inscriptions closes) donne un retour clair à l'apprenant.
+
+### La difficulté rencontrée
+Deux problèmes : `fortify:install` active par défaut la 2FA et les passkeys, explicitement hors périmètre (§7.3), avec deux migrations et des colonnes users inutiles ; et les migrations métier de la phase 1 étaient des fichiers vides que les modèles référençaient déjà.
+
+### Comment je l'ai résolue
+J'ai retiré les fonctionnalités 2FA/passkeys de la config, supprimé leurs migrations avant tout commit, et complété les cinq migrations vides dans un commit `fix(bdd)` à part, validé par `migrate:fresh --seed` et des tests d'inscription (code valide, code inconnu, promotion fermée).

@@ -6,20 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('signalements', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('publication_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->string('motif', 50);
             $table->timestamps();
+
+            // Un membre ne peut signaler qu'une seule fois la même publication
+            $table->unique(['publication_id', 'user_id']);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('signalements');

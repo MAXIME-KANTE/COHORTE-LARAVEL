@@ -6,23 +6,25 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            //
+            $table->foreignId('promotion_id')
+                ->nullable()
+                ->after('id')
+                ->constrained()
+                ->nullOnDelete();
+            
+            $table->string('role', 20)->default('apprenant')->after('email');
+            $table->unsignedInteger('points')->default(0)->after('role');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            //
+            $table->dropConstrainedForeignId('promotion_id');
+            $table->dropColumn(['role', 'points']);
         });
     }
 };
