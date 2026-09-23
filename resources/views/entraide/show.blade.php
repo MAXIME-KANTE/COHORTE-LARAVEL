@@ -11,6 +11,27 @@
         <p class="meta">
             Par {{ $question->auteur->name }}, {{ $question->created_at->format('d/m/Y H:i') }}
         </p>
+
+        @can('signaler', $question)
+            @unless ($dejaSignale)
+                <details class="signalement">
+                    <summary>Signaler cette question</summary>
+                    <form method="POST" action="{{ route('signalements.store', $question) }}">
+                        @csrf
+                        <label for="motif">Motif du signalement</label>
+                        <select id="motif" name="motif" required>
+                            <option value="insulte">Insulte ou propos injurieux</option>
+                            <option value="hors_sujet">Hors sujet</option>
+                            <option value="publicite">Publicité</option>
+                            <option value="autre">Autre</option>
+                        </select>
+                        <button type="submit" class="bouton bouton--danger">Signaler</button>
+                    </form>
+                </details>
+            @else
+                <p class="meta">Vous avez déjà signalé cette question.</p>
+            @endunless
+        @endcan
     </article>
 
     <h2>{{ $question->reponses->count() }} réponse(s)</h2>

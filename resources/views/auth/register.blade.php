@@ -3,35 +3,28 @@
 @section('titre', 'Inscription')
 
 @section('contenu')
-    <div class="mx-auto mt-10 max-w-md rounded-lg bg-white p-6 shadow">
-        <h1 class="mb-4 text-center text-2xl font-semibold">Inscription</h1>
+    <section class="carte carte--formulaire">
+        <h1>Créer un compte</h1>
+        <p class="sous-titre">Rejoignez la promotion de votre école avec votre code d'invitation.</p>
 
-        <form method="POST" action="{{ route('register') }}" class="space-y-4">
+        <form method="POST" action="{{ route('register') }}">
             @csrf
 
-            <div>
-                <label for="name">Nom</label>
-                <input id="name" type="text" name="name" value="{{ old('name') }}" required
-                    autofocus autocomplete="name" class="mt-1 block w-full">
-            </div>
+            <label for="name">Nom</label>
+            <input id="name" type="text" name="name" value="{{ old('name') }}" required
+                autofocus autocomplete="name">
 
-            <div>
-                <label for="email">Email</label>
-                <input id="email" type="email" name="email" value="{{ old('email') }}" required
-                    autocomplete="email" class="mt-1 block w-full">
-            </div>
+            <label for="email">Email</label>
+            <input id="email" type="email" name="email" value="{{ old('email') }}" required
+                autocomplete="email">
 
-            <div>
-                <label for="password">Mot de passe</label>
-                <input id="password" type="password" name="password" required
-                    autocomplete="new-password" class="mt-1 block w-full">
-            </div>
+            <label for="password">Mot de passe</label>
+            <input id="password" type="password" name="password" required
+                autocomplete="new-password">
 
-            <div>
-                <label for="password_confirmation">Confirmer le mot de passe</label>
-                <input id="password_confirmation" type="password" name="password_confirmation" required
-                    autocomplete="new-password" class="mt-1 block w-full">
-            </div>
+            <label for="password_confirmation">Confirmer le mot de passe</label>
+            <input id="password_confirmation" type="password" name="password_confirmation" required
+                autocomplete="new-password">
 
             <label for="code_invitation">Code d’invitation de votre promotion</label>
             <input id="code_invitation" type="text" name="code_invitation"
@@ -42,15 +35,12 @@
                 <p class="erreur">{{ $message }}</p>
             @enderror
 
-            <button type="submit"
-                class="w-full rounded bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700">
-                S'inscrire
-            </button>
+            <button type="submit" class="bouton bouton--pleine">S'inscrire</button>
         </form>
 
-        <p class="mt-4 text-center text-sm">
+        <p class="pied-formulaire">
             Déjà inscrit ?
-            <a href="{{ route('login') }}" class="text-blue-600 hover:underline">Se connecter</a>
+            <a href="{{ route('login') }}">Se connecter</a>
         </p>
-    </div>
+    </section>
 @endsection
