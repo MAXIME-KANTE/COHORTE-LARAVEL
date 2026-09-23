@@ -43,3 +43,14 @@ La notion d'invariante : vérifier promotion_id une fois en amont pour que tous 
 
 **Ce que j'ai rejeté et pourquoi :**  
 Rattacher l'enseignant à une promotion via /rejoindre : j'ai préféré un 403 explicite, l'enseignant passe par son propre module.
+
+## Phase 5 — Fil et cloisonnement
+
+**Ce que j'ai demandé à l'IA :**  
+Diagnostiquer l'erreur « Call to undefined method middleware() » au premier passage des tests de cloisonnement.
+
+**Ce que j'ai retenu :**  
+Depuis Laravel 11, la classe Controller de base du squelette n'étend plus Illuminate\Routing\Controller ; il faut rétablir l'héritage pour utiliser authorizeResource().
+
+**Ce que j'ai rejeté et pourquoi :**  
+Remplacer authorizeResource par des $this->authorize() manuels dans chaque méthode : plus verbeux, et le guide valorise la convention resource + policy.
