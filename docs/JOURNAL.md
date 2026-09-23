@@ -86,3 +86,20 @@ La route `publications.index` n'existe qu'à partir de la phase 5, alors que l'a
 
 ### Comment je l'ai résolue
 J'ai posé une route `/publications` temporaire (remplacée par le resource controller en phase 5) pour que les redirections restent valides à chaque merge, et un `abort_if(enseignant, 403)` défensif dans AdhesionController@store.
+
+## Phase 5 — Le fil de promotion et le cloisonnement
+
+**Branche :** feat/05-fil-promotion
+**Date :** 23 septembre 2026
+
+### Ce que j'ai fait
+J'ai créé PublicationPolicy, le FormRequest StorePublicationRequest et le contrôleur de ressource Feed/PublicationController (index/create/store/show/destroy), avec le fil paginé trié par épinglage, les vues feed et le composant carte-publication. La route temporaire /publications de la phase 4 a été remplacée par le resource controller dans le groupe auth+promotion.
+
+### Pourquoi je l'ai fait ainsi
+Deux mécanismes se combinent : authorizeResource protège chaque page de détail via la policy, et le scope deLaPromotion filtre la liste. Protéger l'un sans l'autre laisse la porte ouverte — c'est le cœur du cloisonnement noté sur 15 points.
+
+### La difficulté rencontrée
+`authorizeResource()` levait « Call to undefined method middleware() » : sous Laravel 13, le Controller de base du squelette n'étend plus Illuminate\Routing\Controller, donc les middlewares de contrôleur n'existaient plus.
+
+### Comment je l'ai résolue
+J'ai fait hériter app/Http/Controllers\Controller de Illuminate\Routing\Controller (commit fix dédié). Le test du guide §9.7 passe : fatou (groupe B) reçoit un 403 en accédant directement à /publications/{id} d'une publication du groupe A, et l'auteur voit sa propre publication masquée.
