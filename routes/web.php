@@ -4,6 +4,8 @@ use App\Http\Controllers\Entraide\QuestionController;
 use App\Http\Controllers\Entraide\ReponseController;
 use App\Http\Controllers\Entraide\ReponseRetenueController;
 use App\Http\Controllers\Feed\PublicationController;
+use App\Http\Controllers\Moderation\FileModerationController;
+use App\Http\Controllers\Moderation\SignalementController;
 use App\Http\Controllers\Profil\ProfilController;
 use App\Http\Controllers\Promotion\AdhesionController;
 use App\Http\Controllers\Promotion\PromotionController;
@@ -46,4 +48,14 @@ Route::middleware(['auth', 'promotion'])->group(function () {
 
     Route::delete('reponses/{reponse}', [ReponseController::class, 'destroy'])
         ->name('reponses.destroy');
+
+    // Signalement d'une publication (masquage automatique au seuil configuré)
+    Route::post('publications/{publication}/signalements', [SignalementController::class, 'store'])
+        ->name('signalements.store');
+
+    // File de modération du délégué
+    Route::get('/moderation', [FileModerationController::class, 'index'])
+        ->name('moderation.index');
+    Route::put('/moderation/{publication}', [FileModerationController::class, 'update'])
+        ->name('moderation.update');
 });

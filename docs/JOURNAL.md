@@ -153,3 +153,20 @@ Le modèle AppelIa cherchait la table appels_ias (pluriel deviné par Laravel) a
 
 ### Comment je l'ai résolue
 J'ai fixé protected $table = 'appel_ias' sur le modèle, et listé le catalogue via l'API /models pour retenir un identifiant :free actif (google/gemma-4-31b-it:free), placé dans .env et documenté.
+
+## Phase 8 — Les signalements et le masquage automatique
+
+**Branche :** feat/08-signalements
+**Date :** 23 septembre 2026
+
+### Ce que j'ai fait
+J'ai créé le SignalementController (trois interdits gérés : pas d'auto-signalement via la policy, pas de double signalement via une vérification PHP adossée à la contrainte unique en base, publication masquée visible par son auteur avec message), le masquage automatique au seuil de 3 signalements, et la FileModerationController du délégué (validation ou refus, double contrôle promotion).
+
+### Pourquoi je l'ai fait ainsi
+La double protection doublon PHP + contrainte unique SQL suit le principe du guide : la base garantit l'intégrité quoi qu'il arrive, le code affiche un message compréhensible. Le délégué ne modère que sa promotion — être délégué du groupe A ne donne aucun droit sur le groupe B.
+
+### La difficulté rencontrée
+Passer l'état « déjà signalé » aux vues show sans déclencher de requête N+1 ni casser le chargement eager existant.
+
+### Comment je l'ai résolue
+Un exists() ciblé sur user_id dans les méthodes show des contrôleurs, transmis à la vue qui affiche soit le formulaire de signalement, soit la mention « vous avez déjà signalé ».

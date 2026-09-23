@@ -23,7 +23,20 @@
 *(À compléter en Phase 1)*
 
 ## Décision 4 : Seuil de signalement
-*(À compléter en Phase 8)*
+
+**Statut :** retenue en phase 8
+
+**Contexte.** À partir de combien de signalements distincts une publication est-elle automatiquement masquée du fil ? Le seuil s'applique à des promotions d'une trentaine de membres.
+
+**Choix : 3 signalements distincts.** Au troisième signalement, la publication passe au statut `masque` et disparaît du fil (elle reste visible pour son auteur, accompagnée du motif).
+
+**Pourquoi.** Trois signalements provenant de trois membres différents, c'est déjà un signal fort dans une promotion de cette taille : ce n'est probablement pas un accident ni un acharnement isolé. En dessous (1 ou 2), un couple de membres en désaccord pourrait faire taire n'importe qui.
+
+**Alternative écartée : un seuil à 5 ou plus.** Il rendrait le masquage quasi inatteignable dans une promotion calme, et la règle métier existerait sur le papier seulement.
+
+**Revers de la décision.** Trois membres coordonnés peuvent masquer une publication saine. C'est pour cela que la publication n'est pas supprimée et que le délégué peut la restaurer depuis sa file de modération : le masquage est réversible par un humain.
+
+**Configurable.** `COHORTE_SEUIL_SIGNALEMENT` dans `.env` (3 par défaut).
 
 ## Décision 5 : Modération hors quota IA
 *(À compléter en Phase 9)*

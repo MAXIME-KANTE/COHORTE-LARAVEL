@@ -36,4 +36,25 @@
             <button type="submit" class="bouton bouton--danger">Supprimer</button>
         </form>
     @endcan
+
+    @can('signaler', $publication)
+        @unless ($dejaSignale)
+            <details class="signalement">
+                <summary>Signaler cette publication</summary>
+                <form method="POST" action="{{ route('signalements.store', $publication) }}">
+                    @csrf
+                    <label for="motif">Motif du signalement</label>
+                    <select id="motif" name="motif" required>
+                        <option value="insulte">Insulte ou propos injurieux</option>
+                        <option value="hors_sujet">Hors sujet</option>
+                        <option value="publicite">Publicité</option>
+                        <option value="autre">Autre</option>
+                    </select>
+                    <button type="submit" class="bouton bouton--danger">Signaler</button>
+                </form>
+            </details>
+        @else
+            <p class="meta">Vous avez déjà signalé cette publication.</p>
+        @endunless
+    @endcan
 @endsection
