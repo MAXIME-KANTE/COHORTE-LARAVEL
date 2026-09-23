@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Feed\PublicationController;
 use App\Http\Controllers\Profil\ProfilController;
 use App\Http\Controllers\Promotion\AdhesionController;
 use App\Http\Controllers\Promotion\PromotionController;
@@ -23,8 +24,10 @@ Route::middleware('auth')->group(function () {
 
     // Profil de l'utilisateur connecté
     Route::get('/profil', [ProfilController::class, 'show'])->name('profil.show');
+});
 
-    // Temporaire : remplacé par le fil complet en phase 5
-    Route::get('/publications', fn () => view('accueil'))
-        ->middleware('promotion')->name('publications.index');
+// Le fil de la promotion, réservé aux membres rattachés
+Route::middleware(['auth', 'promotion'])->group(function () {
+    Route::resource('publications', PublicationController::class)
+        ->only(['index', 'create', 'store', 'show', 'destroy']);
 });
