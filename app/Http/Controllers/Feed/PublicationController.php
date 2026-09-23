@@ -57,6 +57,10 @@ class PublicationController extends Controller
 
         $message = match ($verdict) {
             VerdictModeration::Acceptable => 'Votre publication est en ligne.',
+            // Indisponible + fail-open : publiée quand même malgré la panne IA
+            VerdictModeration::Indisponible => $publication->statut === 'publie'
+                ? 'Modération IA indisponible : votre publication est publiée quand même.'
+                : 'Votre publication est en attente de validation par un délégué.',
             VerdictModeration::Inacceptable => 'Votre publication a été refusée par la modération.',
             default => 'Votre publication est en attente de validation par un délégué.',
         };
