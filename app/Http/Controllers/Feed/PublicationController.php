@@ -74,7 +74,11 @@ class PublicationController extends Controller
 
         $publication->load('auteur', 'reponses.auteur');
 
-        return view('feed.show', compact('publication'));
+        $dejaSignale = $publication->signalements()
+            ->where('user_id', auth()->id())
+            ->exists();
+
+        return view('feed.show', compact('publication', 'dejaSignale'));
     }
 
     public function destroy(Publication $publication): RedirectResponse

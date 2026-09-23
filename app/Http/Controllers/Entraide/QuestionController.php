@@ -68,6 +68,10 @@ class QuestionController extends Controller
     {
         $question->load('auteur', 'reponses.auteur', 'reponseRetenue.auteur');
 
-        return view('entraide.show', compact('question'));
+        $dejaSignale = $question->signalements()
+            ->where('user_id', auth()->id())
+            ->exists();
+
+        return view('entraide.show', compact('question', 'dejaSignale'));
     }
 }
