@@ -14,3 +14,4 @@ return [
     // ou envoyer en file de modération (false)? Décision à justifier.
     'moderation_fail_open' => (bool) env('COHORTE_MODERATION_FAIL_OPEN', false),
 ];
+
