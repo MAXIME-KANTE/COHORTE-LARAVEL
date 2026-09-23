@@ -68,4 +68,23 @@ class User extends Authenticatable
     {
         return $this->role === 'delegue';
     }
+
+    //----------------------------------------------------- Quota IA
+
+    public function appelsIaAujourdhui(): int
+    {
+        return $this->appelsIa()
+            ->where('created_at', '>=', now()->startOfDay())
+            ->count();
+    }
+
+    public function quotaIaRestant(): int
+    {
+        return max(0, config('cohorte.quota_ia_quotidien') - $this->appelsIaAujourdhui());
+    }
+
+    public function peutAppelerIa(): bool
+    {
+        return $this->quotaIaRestant() > 0;
+    }
 }
