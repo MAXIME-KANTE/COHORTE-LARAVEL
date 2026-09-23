@@ -187,3 +187,20 @@ La table s'appelle appel_ias et Laravel devinait appels_ias pour le modèle Appe
 
 ### Comment je l'ai résolue
 protected $table explicite, factory créée avec état doublon(), et comparaison sur now()->startOfDay() qui met les enregistrements plus anciens hors quota automatiquement.
+
+## Phase 10 — La réputation et les finitions
+
+**Branche :** feat/10-reputation
+**Date :** 23 septembre 2026
+
+### Ce que j'ai fait
+J'ai écrit la commande cohorte:recalculer-reputation (chunkById, sous-requête SQL pour les réponses retenues, barème 10/3/1/−5, plancher 0), la méthode epingler de la policy (même promotion, et points au seuil ou délégué), l'EpinglageController avec ses routes store/destroy, la page 403 personnalisée, le tri explicite du fil (orderByRaw('epingle_le IS NULL') indépendant du moteur), et le README d'installation.
+
+### Pourquoi je l'ai fait ainsi
+Le score est stocké incrémentalement mais la commande de recalcul fait foi : c'est la réponse professionnelle au dilemme stockage/recalcul (décision 2). Le tri NULL explicite évite de dépendre du comportement de SQLite sur les NULL en tri descendant — PostgreSQL fait l'inverse.
+
+### La difficulté rencontrée
+Écrire un test de recalcul avec un score attendu exact (17 points) exigeait un scénario sans ambiguïté : une question posée, deux réponses écrites dont une retenue.
+
+### Comment je l'ai résolue
+J'ai construit le scénario en fixture explicite et asserté le nombre exact, ce qui documente le barème mieux qu'un commentaire.
