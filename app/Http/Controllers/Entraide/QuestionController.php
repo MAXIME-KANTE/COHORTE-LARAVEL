@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Entraide;
 
+use App\Enums\VerdictModeration;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreQuestionRequest;
 use App\Models\Publication;
+use App\Services\ServiceModeration;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -38,19 +40,28 @@ class QuestionController extends Controller
         return view('entraide.create');
     }
 
-    public function store(StoreQuestionRequest $request): RedirectResponse
+    public function store(StoreQuestionRequest $request, ServiceModeration $moderation): RedirectResponse
     {
+        $verdict = $moderation->evaluer($request->validated()['contenu'], $request->user());
+
         $question = Publication::create([
             ...$request->validated(),
             'type' => 'question',
             'user_id' => $request->user()->id,
             'promotion_id' => $request->user()->promotion_id,
-            'statut' => 'publie',
+            'statut' => $verdict->statutPublication(),
+            'motif_moderation' => $verdict->value,
         ]);
 
+        $message = match ($verdict) {
+            VerdictModeration::Acceptable => 'Votre question est en ligne.',
+            VerdictModeration::Inacceptable => 'Votre question a été refusée par la modération.',
+            default => 'Votre question est en attente de validation par un délégué.',
+        };
+
         return redirect()
-            ->route('questions.show', $question)
-            ->with('succes', 'Votre question est en ligne.');
+            ->route('questions.index')
+            ->with($verdict === VerdictModeration::Inacceptable ? 'erreur' : 'succes', $message);
     }
 
     public function show(Publication $question): View

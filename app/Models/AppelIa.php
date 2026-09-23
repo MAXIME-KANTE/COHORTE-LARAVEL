@@ -10,7 +10,10 @@ class AppelIa extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'contexte', 'modele', 'reussi'];
+    // La table s'appelle appel_ias (et non appels_ias, que Laravel devinerait)
+    protected $table = 'appel_ias';
+
+    protected $fillable = ['user_id', 'contexte', 'modele', 'reussi', 'duree_ms'];
 
     protected function casts(): array
     {
