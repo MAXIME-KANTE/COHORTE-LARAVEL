@@ -23,6 +23,9 @@
                     @if (auth()->user()->estDelegue())
                         <a href="{{ route('moderation.index') }}">Modération</a>
                     @endif
+                    <span class="quota" title="Appels d'assistance IA restants aujourd'hui">
+                        Assistance IA : {{ auth()->user()->quotaIaRestant() }} / {{ config('cohorte.quota_ia_quotidien') }}
+                    </span>
                     <a href="{{ route('profil.show') }}">{{ auth()->user()->name }}</a>
                 @endif
                 <form method="POST" action="{{ route('logout') }}">
