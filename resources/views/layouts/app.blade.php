@@ -15,6 +15,7 @@
                     <a href="{{ route('enseignant.promotions.index') }}">Promotions</a>
                 @else
                     <a href="{{ route('publications.index') }}">Fil</a>
+                    <a href="{{ route('questions.index') }}">Entraide</a>
                     <a href="{{ route('profil.show') }}">{{ auth()->user()->name }}</a>
                 @endif
                 <form method="POST" action="{{ route('logout') }}">
