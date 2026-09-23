@@ -39,4 +39,15 @@
 **Configurable.** `COHORTE_SEUIL_SIGNALEMENT` dans `.env` (3 par défaut).
 
 ## Décision 5 : Modération hors quota IA
-*(À compléter en Phase 9)*
+
+**Statut :** retenue en phase 9
+
+**Contexte.** Deux fonctionnalités consomment l'IA : la modération automatique (chaque publication) et la détection de doublon (chaque question). Le quota quotidien de 10 appels est commun. À qui l'appliquer ?
+
+**Choix : seul le détecteur de doublon est soumis au quota.** La modération s'exécute toujours, même quota épuisé ; le middleware `quota.ia` ne protège que la route `questions/verifier-doublon`, et le flow de création retombe silencieusement sur l'enregistrement direct quand le quota est vide.
+
+**Pourquoi.** La modération est une contrainte que l'application impose à ses membres, pas un service qu'elle leur rend : la refuser reviendrait à empêcher un membre de s'exprimer (ou à publier sans contrôle). La détection de doublon, elle, est une assistance : on peut la retirer sans dommage — le membre publie simplement sans vérification.
+
+**Alternative écartée : appliquer le quota aux deux.** Elle économiserait des appels, mais créerait deux effets absurdes : des publications non modérées passant dans le fil en fin de journée, et des membres privés de publication pour avoir trop questionné l'IA.
+
+**Les deux comptent.** Chaque appel (modération compris) écrit sa ligne dans appels_ias : le quota affiché reflète bien la consommation totale du budget quotidien.

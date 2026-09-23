@@ -26,13 +26,24 @@
     @isset($similaires)
         <section class="carte">
             <h2>Questions similaires déjà posées</h2>
-            @forelse ($similaires as $similaire)
-                <p>
-                    <a href="{{ route('questions.show', $similaire) }}">{{ $similaire->titre }}</a>
-                </p>
-            @empty
-                <p>Aucune question similaire trouvée.</p>
-            @endforelse
+            <p>Votre question ressemble à celles-ci. Consultez-les peut-être avant de publier :</p>
+            <ul>
+                @forelse ($similaires as $similaire)
+                    <li>
+                        <a href="{{ route('questions.show', $similaire) }}">{{ $similaire->titre }}</a>
+                    </li>
+                @empty
+                    <li>Aucune question similaire trouvée.</li>
+                @endforelse
+            </ul>
+
+            <form method="POST" action="{{ route('questions.store') }}">
+                @csrf
+                <input type="hidden" name="titre" value="{{ old('titre') }}">
+                <input type="hidden" name="contenu" value="{{ old('contenu') }}">
+                <input type="hidden" name="doublon_verifie" value="1">
+                <button type="submit" class="bouton">Publier quand même</button>
+            </form>
         </section>
     @endisset
 @endsection

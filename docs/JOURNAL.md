@@ -170,3 +170,20 @@ Passer l'état « déjà signalé » aux vues show sans déclencher de requête 
 
 ### Comment je l'ai résolue
 Un exists() ciblé sur user_id dans les méthodes show des contrôleurs, transmis à la vue qui affiche soit le formulaire de signalement, soit la mention « vous avez déjà signalé ».
+
+## Phase 9 — Le quota d'IA et la détection de doublon
+
+**Branche :** feat/09-quota-et-doublon
+**Date :** 23 septembre 2026
+
+### Ce que j'ai fait
+J'ai ajouté au modèle User le calcul du quota à partir de la table appels_ias (now()->startOfDay(), jamais whereDate), le middleware quota.ia appliqué à la seule route de vérification de doublon, le ServiceDetectionDoublon (catalogue des 40 dernières questions, consigne JSON, re-filtrage des identifiants sur la promotion), et le flow « publier quand même » avec le champ doublon_verifie. Le quota restant s'affiche dans le gabarit. Le fuseau est passé à Africa/Dakar.
+
+### Pourquoi je l'ai fait ainsi
+La modération n'est pas soumise au quota (contrainte de l'application, pas service au membre) — c'est la décision 5 de DECISIONS.md. Le re-filtrage final sur la promotion est indispensable : le modèle peut inventer ou renvoyer un identifiant hors promotion, et le cloisonnement ne doit jamais dépendre d'une réponse de LLM.
+
+### La difficulté rencontrée
+La table s'appelle appel_ias et Laravel devinait appels_ias pour le modèle AppelIa ; la factory AppelIaFactory n'existait pas non plus. Le quota en test exigeait aussi de créer N appels datés d'aujourd'hui uniquement.
+
+### Comment je l'ai résolue
+protected $table explicite, factory créée avec état doublon(), et comparaison sur now()->startOfDay() qui met les enregistrements plus anciens hors quota automatiquement.
