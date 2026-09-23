@@ -119,3 +119,37 @@ La règle `exists:reponses,id` garantit que la réponse existe, pas qu'elle appa
 
 ### Comment je l'ai résolue
 Un `abort_unless($reponse->publication_id === $question->id, 403)` dans ReponseRetenueController (commit fix dédié), couvert par un test : retenir la réponse d'une autre question renvoie 403.
+
+## Phase 7 — Intégration OpenRouter et modération automatique
+
+**Branche :** feat/07-moderation-ia
+**Date :** 23 septembre 2026
+
+### Ce que j'ai fait
+Un client HTTP isolé (OpenRouterClient) avec timeout 12 s, retry(2, 400, throw: false) et journalisation, l'énumération VerdictModeration dont le cas Indisponible traduit la panne selon config('cohorte.moderation_fail_open'), le ServiceModeration (consigne système + parsing JSON défensif + enregistrement de chaque appel dans appel_ias avec durée), et le branchement des deux store : chaque publication/question reçoit le statut du verdict avec message flash adapté. Tests Http::fake sur les quatre situations du guide plus le cas fail-open.
+
+### Pourquoi je l'ai fait ainsi
+Aucun contrôleur ne contient d'appel Http : le jour où le fournisseur change, un seul fichier bouge. L'énumération interdit les fautes de frappe et garantit un match exhaustif. Le parsing défensif (regex + json_decode + tryFrom) part du principe qu'un modèle de langage produit du texte, jamais une structure garantie.
+
+### La difficulté rencontrée
+Les premiers tests échouaient : l'assertion visait la table appels_ias alors que la base s'appelle appel_ias (le modèle le précise explicitement), et mon test de publication appelait la vraie API faute de Http::fake.
+
+### Comment je l'ai résolue
+J'ai corrigé le nom de table dans les assertions et simulé OpenRouter dans chaque test qui publie. Décision 1 documentée dans DECISIONS.md : fail-closed, justifié par le contexte scolaire (rien ne passe sans contrôle), configurable via COHORTE_MODERATION_FAIL_OPEN.
+
+## Phase 7 — Intégration OpenRouter : la modération automatique
+
+**Branche :** feat/07-moderation-ia
+**Date :** 23 septembre 2026
+
+### Ce que j'ai fait
+J'ai créé le client HTTP OpenRouter (timeout 12 s, 2 retries, jamais d'exception), l'énumération VerdictModeration avec les quatre cas dont Indisponible, puis le ServiceModeration qui interprète la réponse du modèle de façon défensive (extraction JSON par regex, décodage, tryFrom). Chaque publication et chaque question passe maintenant par evaluer() avant enregistrement, et chaque appel est tracé dans appels_ias.
+
+### Pourquoi je l'ai fait ainsi
+Toute la communication extérieure est isolée dans app/Services : le jour où le fournisseur change, un seul fichier bouge. L'énumération interdit les fautes de frappe sur les verdicts et garantit un match exhaustif. Le parsing défensif est indispensable : un modèle de langage renvoie du texte, pas une structure de données, même quand on lui demande du JSON.
+
+### La difficulté rencontrée
+Le modèle AppelIa cherchait la table appels_ias (pluriel deviné par Laravel) alors que la migration crée appel_ias. Les tests échouaient avec « no such table ». J'ai aussi découvert que le modèle gratuit choisi devait venir du catalogue vivant d'OpenRouter, pas d'un identifiant appris par cœur.
+
+### Comment je l'ai résolue
+J'ai fixé protected $table = 'appel_ias' sur le modèle, et listé le catalogue via l'API /models pour retenir un identifiant :free actif (google/gemma-4-31b-it:free), placé dans .env et documenté.

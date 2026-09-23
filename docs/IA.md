@@ -65,3 +65,24 @@ La faille signalée par le guide : exists:reponses,id ne prouve pas l'appartenan
 
 **Ce que j'ai rejeté et pourquoi :**  
 Une méthode marquerReponseRetenue() dans QuestionController : le guide recommande un contrôleur dédié à cette action (principe du contrôleur de ressource singleton).
+## Phase 7 — Modération IA
+
+**Ce que j'ai demandé à l'IA :**  
+Le squelette du client OpenRouter et la stratégie de parsing de la réponse du modèle.
+
+**Ce que j'ai retenu :**  
+La règle « une classe technique ne lève jamais d'exception vers l'appelant » : discuter() renvoie ?string, et la décision métier (statut selon le verdict) reste dans VerdictModeration::statutPublication().
+
+**Ce que j'ai rejeté et pourquoi :**  
+Coder l'identifiant du modèle en dur : le catalogue gratuit d'OpenRouter change souvent, l'identifiant vit dans .env (z-ai/glm-5.2:free au jour du projet).
+
+## Phase 7 — Modération IA
+
+**Ce que j'ai demandé à l'IA :**
+L'implémentation du client OpenRouter, de l'énumération des verdicts et du parsing défensif, ainsi que la liste des modèles gratuits disponibles au catalogue.
+
+**Ce que j'ai retenu :**
+La structure client/service/enum du guide, et le réflexe de requêter /api/v1/models plutôt que de coder un identifiant de modèle en dur.
+
+**Ce que j'ai rejeté et pourquoi :`
+Régénérer la clé API collée dans une conversation : la clé ne doit vivre que dans .env ; je la régénérerai après la soutenance.
