@@ -103,3 +103,19 @@ Deux mécanismes se combinent : authorizeResource protège chaque page de détai
 
 ### Comment je l'ai résolue
 J'ai fait hériter app/Http/Controllers\Controller de Illuminate\Routing\Controller (commit fix dédié). Le test du guide §9.7 passe : fatou (groupe B) reçoit un 403 en accédant directement à /publications/{id} d'une publication du groupe A, et l'auteur voit sa propre publication masquée.
+## Phase 6 — L'entraide : questions, réponses, réponse retenue
+
+**Branche :** feat/06-entraide
+**Date :** 23 septembre 2026
+
+### Ce que j'ai fait
+Trois contrôleurs dans le module Entraide : QuestionController (resource index/create/store/show), ReponseController (store/destroy) et ReponseRetenueController (store), avec la policy designerReponse (auteur de la question uniquement), ReponsePolicy (auteur ou délégué), les vues entraide et le compteur de réponses. Le fil redirige désormais les questions vers leur page dédiée.
+
+### Pourquoi je l'ai fait ainsi
+Désigner une réponse retenue n'est pas « modifier une question » : c'est une action à part entière avec ses propres droits, d'où un contrôleur dédié. La réponse retenue crédite son auteur de 10 points, base du système de réputation de la phase 10.
+
+### La difficulté rencontrée
+La règle `exists:reponses,id` garantit que la réponse existe, pas qu'elle appartient à la question visée : sans vérification, n'importe qui pourrait retenir une réponse d'une autre promotion en modifiant le champ caché.
+
+### Comment je l'ai résolue
+Un `abort_unless($reponse->publication_id === $question->id, 403)` dans ReponseRetenueController (commit fix dédié), couvert par un test : retenir la réponse d'une autre question renvoie 403.

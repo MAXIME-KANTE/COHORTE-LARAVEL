@@ -54,3 +54,14 @@ Depuis Laravel 11, la classe Controller de base du squelette n'étend plus Illum
 
 **Ce que j'ai rejeté et pourquoi :**  
 Remplacer authorizeResource par des $this->authorize() manuels dans chaque méthode : plus verbeux, et le guide valorise la convention resource + policy.
+
+## Phase 6 — Entraide
+
+**Ce que j'ai demandé à l'IA :**  
+Le contrôleur de la réponse retenue et la validation du champ reponse_id.
+
+**Ce que j'ai retenu :**  
+La faille signalée par le guide : exists:reponses,id ne prouve pas l'appartenance à la question. J'ai ajouté abort_unless($reponse->publication_id === $question->id, 403).
+
+**Ce que j'ai rejeté et pourquoi :**  
+Une méthode marquerReponseRetenue() dans QuestionController : le guide recommande un contrôleur dédié à cette action (principe du contrôleur de ressource singleton).
