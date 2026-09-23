@@ -75,3 +75,36 @@ La règle « une classe technique ne lève jamais d'exception vers l'appelant »
 
 **Ce que j'ai rejeté et pourquoi :**  
 Coder l'identifiant du modèle en dur : le catalogue gratuit d'OpenRouter change souvent, l'identifiant vit dans .env (z-ai/glm-5.2:free au jour du projet).
+
+## Phase 8 — Signalements et modération
+
+**Ce que j'ai demandé à l'IA :**
+Les contrôleurs de signalement et de file de modération, et les tests des trois interdits.
+
+**Ce que j'ai retenu :**
+La double protection doublon : vérification PHP pour le message utilisateur, contrainte unique SQL en filet de sécurité.
+
+**Ce que j'ai rejeté et pourquoi :**
+Compter les signalements avec un champ compteur dénormalisé sur publications : source de désynchronisation, un count() sur l'index unique suffit.
+
+## Phase 9 — Quota et doublon
+
+**Ce que j'ai demandé à l'IA :**
+Le service de détection de doublon et le re-filtrage des identifiants renvoyés par le modèle.
+
+**Ce que j'ai retenu :**
+Aucune confiance dans les identifiants sortant d'un LLM : le whereIn final est toujours re-filtré par deLaPromotion().
+
+**Ce que j'ai rejeté et pourquoi :**
+whereDate() pour le quota : il délègue le fuseau à la base, le guide impose now()->startOfDay() sur le fuseau applicatif.
+
+## Phase 10 — Réputation et finitions
+
+**Ce que j'ai demandé à l'IA :**
+La commande de recalcul avec sous-requête, et le test au score exact.
+
+**Ce que j'ai retenu :**
+La sous-requête whereIn('reponse_retenue_id', $membre->reponses()->select('id')) : la base fait tout le travail en une requête.
+
+**Ce que j'ai rejeté et pourquoi :**
+Charger les réponses en PHP pour compter : N requêtes par membre contre une.

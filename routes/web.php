@@ -4,6 +4,7 @@ use App\Http\Controllers\Entraide\DetectionDoublonController;
 use App\Http\Controllers\Entraide\QuestionController;
 use App\Http\Controllers\Entraide\ReponseController;
 use App\Http\Controllers\Entraide\ReponseRetenueController;
+use App\Http\Controllers\Feed\EpinglageController;
 use App\Http\Controllers\Feed\PublicationController;
 use App\Http\Controllers\Moderation\FileModerationController;
 use App\Http\Controllers\Moderation\SignalementController;
@@ -36,6 +37,12 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'promotion'])->group(function () {
     Route::resource('publications', PublicationController::class)
         ->only(['index', 'create', 'store', 'show', 'destroy']);
+
+    // Épinglage d'une publication en haut du fil (seuil de réputation)
+    Route::post('publications/{publication}/epingle', [EpinglageController::class, 'store'])
+        ->name('epingle.store');
+    Route::delete('publications/{publication}/epingle', [EpinglageController::class, 'destroy'])
+        ->name('epingle.destroy');
 
     // L'entraide : questions, réponses et réponse retenue
     Route::resource('questions', QuestionController::class)

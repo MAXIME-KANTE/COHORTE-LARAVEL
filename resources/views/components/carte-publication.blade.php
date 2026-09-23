@@ -13,4 +13,17 @@
     <p class="meta">
         Par {{ $publication->auteur->name }}, {{ $publication->created_at->format('d/m/Y H:i') }}
     </p>
+
+    @can('epingler', $publication)
+        <form method="POST"
+              action="{{ route($publication->epingle_le ? 'epingle.destroy' : 'epingle.store', $publication) }}">
+            @csrf
+            @if ($publication->epingle_le)
+                @method('DELETE')
+                <button type="submit" class="bouton bouton--petit">Désépingler</button>
+            @else
+                <button type="submit" class="bouton bouton--petit">Épingler</button>
+            @endif
+        </form>
+    @endcan
 </article>

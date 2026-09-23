@@ -17,10 +17,28 @@
 **Configurable.** Le comportement est piloté par `COHORTE_MODERATION_FAIL_OPEN` dans `.env` (`false` par défaut). Le passage en fail-open est donc un changement de configuration, pas de code.
 
 ## Décision 2 : Stockage ou recalcul de la réputation
-*(À compléter en Phase 10)*
+
+**Statut :** retenue en phase 10
+
+**Contexte.** Le score de contribution doit apparaître sur le profil et dans le gabarit (droit d'épingler). Deux implémentations possibles : une colonne `points` maintenue par incréments, ou un calcul d'agrégation à chaque affichage.
+
+**Choix : stockage incrémental + commande de recalcul.** Les événements créditent la colonne `users.points` au moment où ils surviennent (réponse retenue : `+10` via increment), et `php artisan cohorte:recalculer-reputation` sait recalculer tout le monde à partir des données réelles (réponses retenues ×10 + réponses ×3 + questions ×1 − publications refusées ×5, plancher à 0).
+
+**Pourquoi.** Le stockage est la seule option tenable pour un affichage dans le gabarit de chaque page : recalculer à chaque rendu coûterait une agrégation par page vue. Mais un incrément oublié désynchroniserait silencieusement le compteur — d'où la commande qui fait foi, exécutable en cron ou après un correctif.
+
+**Alternative écartée : le recalcul à l'affichage.** Toujours juste, mais une requête d'agrégation sur publications + reponses à chaque page, pour chaque membre connecté : disproportionné.
 
 ## Décision 3 : Dénormalisation du promotion_id
-*(À compléter en Phase 1)*
+
+**Statut :** actée dès la phase 1, formalisée ici
+
+**Contexte.** Une publication pourrait retrouver sa promotion via son auteur (users.promotion_id) au lieu de porter sa propre colonne publications.promotion_id.
+
+**Choix : promotion_id figure directement sur publications** (clé étrangère indexée, avec un index composite promotion_id + statut + created_at).
+
+**Pourquoi.** La requête de cloisonnement — celle qui filtre le fil de promotion — devient une simple condition sur une colonne indexée, sans jointure : c'est la requête la plus exécutée de l'application. Et une publication reste rattachée à la promotion dans laquelle elle a été écrite même si son auteur change de promotion ensuite : l'historique d'une promotion ne suit pas les personnes.
+
+**Alternative écartée : déduire la promotion par la jointure users.** Elle économise une colonne au prix d'une jointure sur chaque lecture du fil et d'un historique instable. Aucun des deux n'est acceptable ici.
 
 ## Décision 4 : Seuil de signalement
 
