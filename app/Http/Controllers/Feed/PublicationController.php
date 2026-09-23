@@ -54,8 +54,13 @@ class PublicationController extends Controller
             ->with('succes', 'Votre publication est en ligne.');
     }
 
-    public function show(Publication $publication): View
+    public function show(Publication $publication): View|RedirectResponse
     {
+        // Une question se consulte dans son module d'entraide dédié
+        if ($publication->type === 'question') {
+            return redirect()->route('questions.show', $publication);
+        }
+
         $publication->load('auteur', 'reponses.auteur');
 
         return view('feed.show', compact('publication'));

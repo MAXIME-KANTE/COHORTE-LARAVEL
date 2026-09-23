@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Entraide\QuestionController;
+use App\Http\Controllers\Entraide\ReponseController;
+use App\Http\Controllers\Entraide\ReponseRetenueController;
 use App\Http\Controllers\Feed\PublicationController;
 use App\Http\Controllers\Profil\ProfilController;
 use App\Http\Controllers\Promotion\AdhesionController;
@@ -30,4 +33,17 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'promotion'])->group(function () {
     Route::resource('publications', PublicationController::class)
         ->only(['index', 'create', 'store', 'show', 'destroy']);
+
+    // L'entraide : questions, réponses et réponse retenue
+    Route::resource('questions', QuestionController::class)
+        ->only(['index', 'create', 'store', 'show']);
+
+    Route::post('questions/{question}/reponses', [ReponseController::class, 'store'])
+        ->name('reponses.store');
+
+    Route::post('questions/{question}/reponse-retenue', [ReponseRetenueController::class, 'store'])
+        ->name('reponse-retenue.store');
+
+    Route::delete('reponses/{reponse}', [ReponseController::class, 'destroy'])
+        ->name('reponses.destroy');
 });
