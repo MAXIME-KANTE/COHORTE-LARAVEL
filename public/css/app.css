@@ -1,0 +1,616 @@
+/* ==========================================================================
+   Cohorte — feuille de style principale
+   Design system maison (CSS pur, aucun build requis)
+   --------------------------------------------------------------------------
+   Sommaire :
+     1. Jetons de design (couleurs, rayons, ombres)
+     2. Réinitialisation et base
+     3. Mise en page (barre de navigation, conteneur, pied de page)
+     4. Composants : boutons, cartes, badges, alertes
+     5. Formulaires
+     6. Éléments divers : pagination, code, état vide
+     7. Accessibilité et préférences utilisateur
+   ========================================================================== */
+
+/* 1. Jetons de design
+   -------------------------------------------------------------------------- */
+:root {
+    color-scheme: light;
+
+    /* Surfaces et texte */
+    --couleur-fond: #f4f6fb;
+    --couleur-surface: #ffffff;
+    --couleur-surface-2: #eef1f8;
+    --couleur-texte: #1c2333;
+    --couleur-texte-doux: #5c6579;
+    --couleur-bordure: #e2e6f0;
+
+    /* Marque */
+    --couleur-primaire: #4f46e5;
+    --couleur-primaire-fonce: #4338ca;
+    --couleur-primaire-doux: #eef2ff;
+    --couleur-lien: #4f46e5;
+
+    /* États */
+    --couleur-succes: #166534;
+    --couleur-succes-fond: #f0fdf4;
+    --couleur-succes-bordure: #bbf7d0;
+
+    --couleur-erreur: #b91c1c;
+    --couleur-erreur-fond: #fef2f2;
+    --couleur-erreur-bordure: #fecaca;
+
+    /* Badge (épinglé) */
+    --badge-fond: #fef3c7;
+    --badge-texte: #92400e;
+    --badge-bordure: #fde68a;
+
+    /* Forme et profondeur */
+    --rayon: 12px;
+    --rayon-petit: 8px;
+    --ombre-carte: 0 1px 2px rgb(16 24 40 / 0.05), 0 10px 28px -16px rgb(16 24 40 / 0.18);
+
+    /* Typographie */
+    --police: 'Instrument Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
+        'Helvetica Neue', Arial, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        color-scheme: dark;
+
+        --couleur-fond: #0f1118;
+        --couleur-surface: #171a24;
+        --couleur-surface-2: #1f2331;
+        --couleur-texte: #e7eaf3;
+        --couleur-texte-doux: #9aa2b8;
+        --couleur-bordure: #2a2f40;
+
+        --couleur-primaire: #6366f1;
+        --couleur-primaire-fonce: #818cf8;
+        --couleur-primaire-doux: #2b2a5e;
+        --couleur-lien: #a5b4fc;
+
+        --couleur-succes: #86efac;
+        --couleur-succes-fond: #12291c;
+        --couleur-succes-bordure: #1f5133;
+
+        --couleur-erreur: #fca5a5;
+        --couleur-erreur-fond: #2c1416;
+        --couleur-erreur-bordure: #7f1d1d;
+
+        --badge-fond: #33290d;
+        --badge-texte: #fcd34d;
+        --badge-bordure: #6b5518;
+
+        --ombre-carte: 0 1px 2px rgb(0 0 0 / 0.4), 0 10px 28px -16px rgb(0 0 0 / 0.6);
+    }
+}
+
+/* 2. Réinitialisation et base
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    font-family: var(--police);
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--couleur-texte);
+    background-color: var(--couleur-fond);
+    -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+    background: var(--couleur-primaire);
+    color: #ffffff;
+}
+/* 3. Mise en page
+   -------------------------------------------------------------------------- */
+.barre {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+    padding: 0.75rem clamp(1rem, 4vw, 2rem);
+    background-color: color-mix(in srgb, var(--couleur-surface) 88%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--couleur-bordure);
+}
+
+.logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--couleur-texte);
+    text-decoration: none;
+}
+
+.logo::before {
+    content: '';
+    inline-size: 0.65rem;
+    block-size: 0.65rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+}
+
+.barre nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.barre nav a {
+    padding: 0.45rem 0.85rem;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--couleur-texte-doux);
+    text-decoration: none;
+    transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.barre nav a:hover {
+    color: var(--couleur-texte);
+    background-color: var(--couleur-surface-2);
+    text-decoration: none;
+}
+
+.barre nav form {
+    margin-inline-start: 0.25rem;
+}
+
+.conteneur {
+    flex: 1;
+    inline-size: 100%;
+    max-inline-size: 52rem;
+    margin-inline: auto;
+    padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1rem, 4vw, 1.5rem) 4rem;
+}
+
+.conteneur h1 {
+    margin: 0 0 1rem;
+    font-size: clamp(1.45rem, 2.5vw + 1rem, 1.9rem);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+}
+
+.entete-fil {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1.5rem;
+    margin-block-end: 1.25rem;
+}
+
+.entete-fil h1 {
+    margin: 0;
+}
+
+.pied {
+    padding: 1.25rem;
+    border-block-start: 1px solid var(--couleur-bordure);
+    font-size: 0.85rem;
+    color: var(--couleur-texte-doux);
+    text-align: center;
+}
+
+.pied p {
+    margin: 0;
+}
+
+/* 4. Composants
+   -------------------------------------------------------------------------- */
+/* Boutons */
+.bouton,
+form button[type='submit'] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.55rem 1.15rem;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    font: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #ffffff;
+    background-color: var(--couleur-primaire);
+    box-shadow: 0 1px 2px rgb(16 24 40 / 0.1);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.15s ease, transform 0.05s ease;
+}
+
+.bouton:hover,
+form button[type='submit']:hover {
+    background-color: var(--couleur-primaire-fonce);
+    text-decoration: none;
+}
+
+.bouton:active,
+form button[type='submit']:active {
+    transform: translateY(1px);
+}
+
+.bouton + .bouton {
+    margin-inline-start: 0.5rem;
+}
+
+.bouton--pleine {
+    inline-size: 100%;
+    margin-block-start: 1.25rem;
+}
+
+.bouton--danger {
+    background-color: var(--couleur-erreur);
+}
+
+/* Bouton « Déconnexion » : style discret dans la barre de navigation */
+.barre nav button {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.45rem 0.85rem;
+    border: none;
+    border-radius: 999px;
+    font: inherit;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--couleur-texte-doux);
+    background: none;
+    box-shadow: none;
+    cursor: pointer;
+    transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.barre nav button:hover {
+    color: var(--couleur-erreur);
+    background-color: var(--couleur-surface-2);
+}
+
+/* Cartes */
+.carte {
+    margin-block: 1.25rem;
+    padding: 1.4rem 1.5rem;
+    border: 1px solid var(--couleur-bordure);
+    border-radius: var(--rayon);
+    background-color: var(--couleur-surface);
+    box-shadow: var(--ombre-carte);
+}
+
+.carte h1 {
+    margin: 0 0 0.5rem;
+    font-size: 1.35rem;
+}
+
+.carte h2 {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0 0 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.carte h2 a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.carte h2 a:hover {
+    color: var(--couleur-lien);
+    text-decoration: underline;
+}
+
+.carte p {
+    margin: 0.5rem 0;
+    overflow-wrap: break-word;
+}
+
+.carte--formulaire {
+    max-inline-size: 26rem;
+    margin-inline: auto;
+}
+
+.meta {
+    margin-block-start: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--couleur-texte-doux);
+}
+
+/* Les formulaires posés directement dans la page (connexion, publication…)
+   adoptent le style de carte pour rester cohérents. */
+.conteneur > form {
+    margin-block: 1.25rem;
+    padding: 1.4rem 1.5rem;
+    border: 1px solid var(--couleur-bordure);
+    border-radius: var(--rayon);
+    background-color: var(--couleur-surface);
+    box-shadow: var(--ombre-carte);
+}
+
+/* Badges */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.15rem 0.65rem;
+    border: 1px solid var(--badge-bordure);
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--badge-texte);
+    background-color: var(--badge-fond);
+}
+
+/* Alertes */
+.alerte {
+    margin-block: 1rem;
+    padding: 0.9rem 1.1rem;
+    border: 1px solid var(--couleur-bordure);
+    border-radius: var(--rayon-petit);
+    font-size: 0.95rem;
+}
+
+.alerte--succes {
+    color: var(--couleur-succes);
+    border-color: var(--couleur-succes-bordure);
+    background-color: var(--couleur-succes-fond);
+}
+
+.alerte--erreur {
+    color: var(--couleur-erreur);
+    border-color: var(--couleur-erreur-bordure);
+    background-color: var(--couleur-erreur-fond);
+}
+
+.alerte ul {
+    margin: 0.25rem 0 0;
+    padding-inline-start: 1.1rem;
+}
+
+
+
+/* 5. Formulaires
+   -------------------------------------------------------------------------- */
+form {
+    margin: 0;
+}
+
+label {
+    display: block;
+    margin: 1rem 0 0.35rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+label:has(input[type='checkbox']) {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 400;
+}
+
+input[type='text'],
+input[type='email'],
+input[type='password'],
+select,
+textarea {
+    inline-size: 100%;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--couleur-bordure);
+    border-radius: var(--rayon-petit);
+    font: inherit;
+    color: var(--couleur-texte);
+    background-color: var(--couleur-fond);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+input[type='text']:focus,
+input[type='email']:focus,
+input[type='password']:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--couleur-primaire);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--couleur-primaire) 22%, transparent);
+}
+
+textarea {
+    min-block-size: 8rem;
+    resize: vertical;
+}
+
+input[type='checkbox'] {
+    inline-size: 1rem;
+    block-size: 1rem;
+    accent-color: var(--couleur-primaire);
+}
+
+.erreur {
+    margin: 0.35rem 0 0;
+    font-size: 0.85rem;
+    color: var(--couleur-erreur);
+}
+
+.sous-titre {
+    margin: -0.5rem 0 0.5rem;
+    font-size: 0.95rem;
+    color: var(--couleur-texte-doux);
+}
+
+.pied-formulaire {
+    margin-block-start: 1.25rem;
+    font-size: 0.9rem;
+    color: var(--couleur-texte-doux);
+    text-align: center;
+}
+
+/* 6. Éléments divers
+   -------------------------------------------------------------------------- */
+.vide {
+    margin-block: 1.25rem;
+    padding: 2.5rem 1rem;
+    border: 1px dashed var(--couleur-bordure);
+    border-radius: var(--rayon);
+    color: var(--couleur-texte-doux);
+    background-color: var(--couleur-surface);
+    text-align: center;
+}
+
+code {
+    padding: 0.15rem 0.5rem;
+    border: 1px solid var(--couleur-bordure);
+    border-radius: 6px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+    font-size: 0.9em;
+    background-color: var(--couleur-surface-2);
+}
+
+/* Pagination (vues Laravel par défaut) */
+nav[aria-label='Pagination Navigation'] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    margin-block-start: 1.5rem;
+}
+
+nav[aria-label='Pagination Navigation'] a,
+nav[aria-label='Pagination Navigation'] span {
+    padding: 0.4rem 0.75rem;
+    border: 1px solid var(--couleur-bordure);
+    border-radius: var(--rayon-petit);
+    font-size: 0.9rem;
+    color: var(--couleur-texte);
+    background-color: var(--couleur-surface);
+    text-decoration: none;
+}
+
+nav[aria-label='Pagination Navigation'] a:hover {
+    border-color: var(--couleur-primaire);
+    color: var(--couleur-lien);
+}
+
+nav[aria-label='Pagination Navigation'] span {
+    color: var(--couleur-texte-doux);
+    background-color: var(--couleur-surface-2);
+}
+
+/* 7. Accessibilité et préférences utilisateur
+   -------------------------------------------------------------------------- */
+a {
+    color: var(--couleur-lien);
+}
+
+a:focus-visible,
+button:focus-visible {
+    outline: 2px solid var(--couleur-primaire);
+    outline-offset: 2px;
+}
+
+/* Lien d'évitement : visible uniquement à la prise de focus clavier */
+.acces-rapide {
+    position: absolute;
+    inset-inline-start: -9999px;
+}
+
+.acces-rapide:focus {
+    position: fixed;
+    inset-block-start: 0.75rem;
+    inset-inline-start: 0.75rem;
+    z-index: 100;
+    padding: 0.5rem 0.9rem;
+    border-radius: var(--rayon-petit);
+    color: #ffffff;
+    background-color: var(--couleur-primaire);
+    text-decoration: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        transition: none !important;
+/* 8. Vues Entraide et Modération
+   -------------------------------------------------------------------------- */
+/* Titre de section hors carte (ex. « N réponse(s) ») */
+.conteneur h2 {
+    margin: 1.5rem 0 0.75rem;
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+/* Marge des boutons dans les formulaires imbriqués (cartes, signalements…) */
+.carte form button[type='submit'],
+.signalement form button[type='submit'] {
+    margin-block-start: 1rem;
+}
+
+/* Carte « réponse retenue » : mise en avant verte */
+.carte--retenue {
+    border-color: var(--couleur-succes-bordure);
+    box-shadow: 0 0 0 1px var(--couleur-succes-bordure), var(--ombre-carte);
+}
+
+/* Bloc de signalement (détails dépliables) */
+.signalement {
+    margin-block-start: 1rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--couleur-erreur-bordure);
+    border-radius: var(--rayon-petit);
+    font-size: 0.92rem;
+    background-color: var(--couleur-erreur-fond);
+}
+
+.signalement summary {
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--couleur-erreur);
+}
+
+.signalement label {
+    margin-block-start: 0.75rem;
+}
+
+.signalement form button[type='submit'] {
+    margin-block-start: 0.75rem;
+}
+
+/* Liste d'actions côte à côte (valider / refuser en modération) */
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    margin-block-start: 1rem;
+}
+
+.actions form {
+    margin: 0;
+}
+
+.actions form button[type='submit'] {
+    margin-block-start: 0;
+}
+
+        animation: none !important;
+    }
+}
