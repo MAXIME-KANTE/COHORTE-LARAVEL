@@ -23,6 +23,9 @@ class ReponseRetenueController extends Controller
 
         $reponse = Reponse::findOrFail($donnees['reponse_id']);
 
+        // Une réponse ne peut être retenue que si elle appartient bien à cette question
+        abort_unless($reponse->publication_id === $question->id, 403);
+
         $question->update(['reponse_retenue_id' => $reponse->id]);
         $reponse->auteur->increment('points', 10);
 
