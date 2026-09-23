@@ -8,14 +8,12 @@
 </head>
 <body>
     <header class="barre">
-        <a href="{{ route('feed.index') }}" class="logo">Cohorte</a>
+        <a href="/" class="logo">Cohorte</a>
         @auth
             <nav>
-                <a href="{{ route('entraide.index') }}">Entraide</a>
-                <a href="{{ route('profil.show') }}">{{ auth()->user()->name }}</a>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit">Déconnexion</button>
+                    <button type="submit">Déconnexion ({{ auth()->user()->name }})</button>
                 </form>
             </nav>
         @endauth
