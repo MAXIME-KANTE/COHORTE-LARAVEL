@@ -6,20 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('appel_ias', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->string('contexte', 40); // moderation | doublon
+            $table->string('modele');
+            $table->boolean('reussi')->default(true);
+            $table->unsignedInteger('duree_ms')->nullable();
             $table->timestamps();
+
+            $table->index(['user_id', 'created_at']);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('appel_ias');
