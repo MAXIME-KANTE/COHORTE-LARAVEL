@@ -6,6 +6,7 @@ use App\Models\Publication;
 use App\Models\Promotion;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class CloisonnementTest extends TestCase
@@ -69,6 +70,11 @@ class CloisonnementTest extends TestCase
 
     public function test_un_apprenant_peut_publier_dans_son_fil(): void
     {
+        // La modération IA est simulée : verdict acceptable, publication directe
+        Http::fake(['openrouter.ai/*' => Http::response([
+            'choices' => [['message' => ['content' => '{"verdict":"acceptable","raison":"contenu normal"}']]],
+        ], 200)]);
+
         $promo = Promotion::factory()->create();
         $awa = User::factory()->create(['promotion_id' => $promo->id]);
 
