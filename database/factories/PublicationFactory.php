@@ -33,4 +33,12 @@ class PublicationFactory extends Factory
     {
         return $this->state(fn () => ['statut' => 'en_moderation']);
     }
+
+    public function masquee(): static
+    {
+        return $this->state(fn () => [
+            'statut' => 'masque',
+            'motif_moderation' => fake()->sentence(4),
+        ]);
+    }
 }
