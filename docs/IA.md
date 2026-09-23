@@ -32,3 +32,14 @@ Le limiteur de connexion personnalisé (5 essais/minute, clé e-mail+IP) et la v
 
 **Ce que j'ai rejeté et pourquoi :**  
 La 2FA et les passkeys que `fortify:install` active par défaut : le guide §7.3 les met explicitement hors périmètre, et leurs migrations pollueraient le schéma de base.
+
+## Phase 4 — Adhésion et profil
+
+**Ce que j'ai demandé à l'IA :**  
+La structure du middleware ExigePromotion et la gestion des cas limites (enseignant, compte sans promotion).
+
+**Ce que j'ai retenu :**  
+La notion d'invariante : vérifier promotion_id une fois en amont pour que tous les scopes en aval le tiennent pour acquis.
+
+**Ce que j'ai rejeté et pourquoi :**  
+Rattacher l'enseignant à une promotion via /rejoindre : j'ai préféré un 403 explicite, l'enseignant passe par son propre module.
